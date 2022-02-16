@@ -20,7 +20,6 @@ public class AppPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new CalendarModule(reactContext));
         modules.add(new FileObserverModule(reactContext));
 
         return modules;
