@@ -1,19 +1,17 @@
 import {useEffect, useState} from 'react';
-import {NativeModules, NativeEventEmitter} from 'react-native';
+import {NativeModules, NativeEventEmitter, Platform} from 'react-native';
 import RNFS from 'react-native-fs';
 
 const {FileObserverModule} = NativeModules;
 
 const useFileStorages = () => {
   const [store, setStore] = useState({});
-  const STORE_PATH = RNFS.TemporaryDirectoryPath + '/store.json';
-
+  const STORE_PATH = RNFS.TemporaryDirectoryPath + 'store.json';
   useEffect(() => {
     RNFS.exists(STORE_PATH).then(result => {
       if (result) {
-        RNFS.readFile(STORE_PATH).then(value => {
-          setStore(JSON.parse(value));
-        });
+        const storeParse = parseData(STORE_PATH);
+        setStore(storeParse);
       }
     });
   }, [STORE_PATH]);
@@ -24,7 +22,8 @@ const useFileStorages = () => {
     const sub = eventEmitter.addListener('STORE_CHANGE', async data => {
       console.log('data: ', data);
       try {
-        setStore(JSON.parse(data));
+        Platform.OS === 'ios' ?  setStore((data)) : setStore(JSON.parse(data));
+       
       } catch (error) {
         setStore({});
       }
@@ -34,18 +33,30 @@ const useFileStorages = () => {
     };
   }, [STORE_PATH]);
 
+  const parseData = async(STORE_PATH) =>{
+    try {
+      const read = await RNFS.readFile(STORE_PATH);
+      const storeParse = JSON.parse(read);
+      return storeParse;
+    } catch (ex) {
+      return {};
+    }
+  }
+  
   const emitStore = async value => {
     if (typeof value !== 'object') {
       throw new Error('Must be emit object');
     }
     const exists = await RNFS.exists(STORE_PATH);
     if (exists) {
-      const read = await RNFS.readFile(STORE_PATH);
-      const storeParse = JSON.parse(read);
-      await RNFS.writeFile(
-        STORE_PATH,
-        JSON.stringify({...storeParse, ...value}),
-      );
+      const storeParse = parseData(STORE_PATH);
+      if(storeParse){
+        await RNFS.writeFile(
+          STORE_PATH,
+          JSON.stringify({...storeParse, ...value}),
+        );
+      }
+      
     } else {
       await RNFS.writeFile(STORE_PATH, JSON.stringify({...value}));
     }
