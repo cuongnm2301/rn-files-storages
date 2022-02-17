@@ -115,7 +115,7 @@ RCT_EXPORT_MODULE();
   NSString *fileContents = [NSString stringWithContentsOfFile:self->_testFileURL encoding:NSUTF8StringEncoding error:&error];
   
   if (_hasListeners) {
-    [self sendEventWithName:eventChange body:@{ @"data": fileContents,@"event": event }];
+    [self sendEventWithName:eventChange body:[NSString stringWithFormat:@"%@",fileContents]];
   }
 }
 
