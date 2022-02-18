@@ -22,7 +22,7 @@ const useFileStorages = () => {
     const sub = eventEmitter.addListener('STORE_CHANGE', async data => {
       console.log('data: ', data);
       try {
-        Platform.OS === 'ios' ?  setStore((data)) : setStore(JSON.parse(data));
+        setStore(JSON.parse(data));
        
       } catch (error) {
         setStore({});
