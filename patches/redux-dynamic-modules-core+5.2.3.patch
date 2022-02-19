@@ -1,0 +1,15 @@
+diff --git a/node_modules/redux-dynamic-modules-core/src/Managers/ModuleManager.ts b/node_modules/redux-dynamic-modules-core/src/Managers/ModuleManager.ts
+index 503ed37..098c6cb 100644
+--- a/node_modules/redux-dynamic-modules-core/src/Managers/ModuleManager.ts
++++ b/node_modules/redux-dynamic-modules-core/src/Managers/ModuleManager.ts
+@@ -107,9 +107,8 @@ export function getModuleManager<State = {}>(
+             if (!modulesToAdd || modulesToAdd.length === 0) {
+                 return;
+             }
+-            modulesToAdd = modulesToAdd.filter(module => module);
+             const justAddedModules: IModule<any>[] = [];
+-            modulesToAdd.forEach(module => {
++            modulesToAdd.filter(module => module).forEach(module => {
+                 if (!_moduleIds.has(module.id)) {
+                     _moduleIds.add(module.id);
+                     _modules.push(module);
